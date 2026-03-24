@@ -1,0 +1,31 @@
+{
+  "ModId": "p3rpc.asyncassetloader",
+  "ModName": "Async Asset Loader",
+  "ModAuthor": "Rirurin",
+  "ModVersion": "1.0.0",
+  "ModDescription": "Methods for calling UAssetLoader",
+  "ModDll": "p3rpc.asyncassetloader.dll",
+  "ModIcon": "Preview.png",
+  "ModR2RManagedDll32": "x86/p3rpc.asyncassetloader.dll",
+  "ModR2RManagedDll64": "x64/p3rpc.asyncassetloader.dll",
+  "ModNativeDll32": "",
+  "ModNativeDll64": "",
+  "IsLibrary": true,
+  "ReleaseMetadataFileName": "p3rpc.asyncassetloader.ReleaseMetadata.json",
+  "PluginData": {},
+  "IsUniversalMod": false,
+  "ModDependencies": [
+    "P3R.UEToolkit",
+    "p3rpc.essentials",
+    "p3rpc.nativetypes",
+    "Reloaded.Memory.SigScan.ReloadedII",
+    "reloaded.sharedlib.hooks",
+    "SharedScans.Reloaded",
+    "UE.Toolkit.Reloaded"
+  ],
+  "OptionalDependencies": [],
+  "SupportedAppId": [
+    "p3r.exe"
+  ],
+  "ProjectUrl": ""
+}
