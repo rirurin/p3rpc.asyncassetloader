@@ -20,11 +20,14 @@ public class AssetLoader : ModuleBase<AssetContext>, IAssetLoader
     [Function(FunctionAttribute.Register.r15, FunctionAttribute.Register.rax, false)]
     public unsafe delegate void UAssetLoader_CheckStreamedAssets(UAssetLoader* loader);
 
-    private SHFunction<UAssetLoader_LoadTargetAsset> _loadTargetAsset;
+    private SHFunction<UAssetLoader_LoadTargetAsset> _UAssetLoader_LoadTargetAsset;
     private unsafe delegate void UAssetLoader_LoadTargetAsset(UAssetLoader* self, FString* name, nint dest);
 
-    private SHFunction<UAssetLoader_LoadQueuedAssets> _loadQueuedAssets;
+    private SHFunction<UAssetLoader_LoadQueuedAssets> _UAssetLoader_LoadQueuedAssets;
     private unsafe delegate void UAssetLoader_LoadQueuedAssets(UAssetLoader* self);
+
+    private SHFunction<UAssetLoader_CreateStreamHandle> _UAssetLoader_CreateStreamHandle;
+    private unsafe delegate void UAssetLoader_CreateStreamHandle(UAssetLoader* self);
 
     private Dictionary<nint, (Action<nint> onLoadCb, string fileName)> MemoryToNotify = new();
 
@@ -47,8 +50,9 @@ public class AssetLoader : ModuleBase<AssetContext>, IAssetLoader
             },
             CheckStreamedAssetsMS
         );
-        _loadTargetAsset = new();
-        _loadQueuedAssets = new();
+        _UAssetLoader_LoadTargetAsset = new();
+        _UAssetLoader_LoadQueuedAssets = new();
+        _UAssetLoader_CreateStreamHandle = new();
     }
 
     public override void Register() {}
@@ -77,10 +81,13 @@ public class AssetLoader : ModuleBase<AssetContext>, IAssetLoader
     {
         var assetNameFString = _context._toolkitStrings.CreateFString(path);
         MemoryToNotify.Add(target, (onLoadedCb, path));
-        _loadTargetAsset.Wrapper(loader, (FString*)assetNameFString, target);
+        _UAssetLoader_LoadTargetAsset.Wrapper(loader, (FString*)assetNameFString, target);
         _context._toolkitMemory.Free((nint)assetNameFString);
     }
 
     public unsafe void LoadAsset(IntPtr loader, string path, IntPtr target, Action<IntPtr> onLoaderCb)
         => LoadAssetInner((UAssetLoader*)loader, path, target, onLoaderCb);
+
+    public unsafe void CreateHandle(nint loader) => _UAssetLoader_CreateStreamHandle.Wrapper((UAssetLoader*)loader);
+    public unsafe void LoadQueuedAssets(nint loader) => _UAssetLoader_LoadQueuedAssets.Wrapper((UAssetLoader*)loader);
 }
