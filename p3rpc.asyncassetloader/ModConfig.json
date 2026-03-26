@@ -3,7 +3,7 @@
   "ModName": "Async Asset Loader",
   "ModAuthor": "Rirurin",
   "ModVersion": "1.0.0",
-  "ModDescription": "Methods for calling UAssetLoader",
+  "ModDescription": "Exposes UAssetLoader methods to asynchronously loading assets in Persona 3 Reload",
   "ModDll": "p3rpc.asyncassetloader.dll",
   "ModIcon": "Preview.png",
   "ModR2RManagedDll32": "x86/p3rpc.asyncassetloader.dll",
