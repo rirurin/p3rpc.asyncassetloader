@@ -8,3 +8,6 @@ riderModule.iml
 
 # Jetbrains IDE
 **/.idea/*
+
+# Reloaded build output
+**/Publish

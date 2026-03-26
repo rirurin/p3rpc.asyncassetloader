@@ -15,8 +15,8 @@ public class AssetLoader : ModuleBase<AssetContext>, IAssetLoader
     private string UAssetLoader_CheckStreamedAssets_SIG = "49 8D 4F ?? 48 89 5C 24 ?? 48 8D 54 24 ??";
     private string UAssetLoader_CheckStreamedAssets_SIG_EpAigis = "49 8D 0C ?? 48 89 5C 24 ?? 48 8D 54 24 ??";
     private MultiSignature CheckStreamedAssetsMS;
-    private IAsmHook _checkStreamedAssets;
-    private IReverseWrapper<UAssetLoader_CheckStreamedAssets> _checkStreamedAssetsWrapper;
+    private IAsmHook? _checkStreamedAssets;
+    private IReverseWrapper<UAssetLoader_CheckStreamedAssets>? _checkStreamedAssetsWrapper;
     [Function(FunctionAttribute.Register.r15, FunctionAttribute.Register.rax, false)]
     public unsafe delegate void UAssetLoader_CheckStreamedAssets(UAssetLoader* loader);
 
