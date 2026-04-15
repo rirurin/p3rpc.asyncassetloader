@@ -11,10 +11,10 @@
 	    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 
 	    <!-- Set to the same as your project name/namespace -->
-	    <PackageId>p3rpc.flowscriptframework.Interfaces</PackageId>
+	    <PackageId>p3rpc.asyncassetloader.Interfaces</PackageId>
 
 	    <!-- Use Semantic Versioning -->
-	    <Version>1.0.0</Version>
+	    <Version>1.0.1</Version>
 	    <Authors>Rirurin</Authors>
 
 	    <!-- Description of your Package -->

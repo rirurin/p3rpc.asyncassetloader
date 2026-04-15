@@ -12,6 +12,9 @@ namespace p3rpc.asyncassetloader;
 // ReSharper disable once ClassNeverInstantiated.Global
 public class AssetLoader : ModuleBase<AssetContext>, IAssetLoader
 {
+    private SHFunction<UAssetLoader_LoadTargetAsset> _UAssetLoader_LoadTargetAsset;
+    private unsafe delegate void UAssetLoader_LoadTargetAsset(UAssetLoader* self, FString* name, nint dest);
+    
     private string UAssetLoader_CheckStreamedAssets_SIG = "49 8D 4F ?? 48 89 5C 24 ?? 48 8D 54 24 ??";
     private string UAssetLoader_CheckStreamedAssets_SIG_EpAigis = "49 8D 0C ?? 48 89 5C 24 ?? 48 8D 54 24 ??";
     private MultiSignature CheckStreamedAssetsMS;
@@ -20,13 +23,10 @@ public class AssetLoader : ModuleBase<AssetContext>, IAssetLoader
     [Function(FunctionAttribute.Register.r15, FunctionAttribute.Register.rax, false)]
     public unsafe delegate void UAssetLoader_CheckStreamedAssets(UAssetLoader* loader);
 
-    private SHFunction<UAssetLoader_LoadTargetAsset> _UAssetLoader_LoadTargetAsset;
-    private unsafe delegate void UAssetLoader_LoadTargetAsset(UAssetLoader* self, FString* name, nint dest);
-
-    private SHFunction<UAssetLoader_LoadQueuedAssets> _UAssetLoader_LoadQueuedAssets;
-    private unsafe delegate void UAssetLoader_LoadQueuedAssets(UAssetLoader* self);
-
-    private SHFunction<UAssetLoader_CreateStreamHandle> _UAssetLoader_CreateStreamHandle;
+    private string UAssetLoader_CreateStreamHandle_SIG_0 = "48 89 E0 41 56 48 81 EC 90 00 00 00";
+    private string UAssetLoader_CreateStreamHandle_SIG_1 = "48 8B C4 41 56 48 81 EC 90 00 00 00 80 79 ?? 00";
+    private MultiSignature CreateStreamHandleMS;
+    private UAssetLoader_CreateStreamHandle? _UAssetLoader_CreateStreamHandle;
     private unsafe delegate void UAssetLoader_CreateStreamHandle(UAssetLoader* self);
 
     private Dictionary<nint, (Action<nint> onLoadCb, string fileName)> MemoryToNotify = new();
@@ -34,6 +34,7 @@ public class AssetLoader : ModuleBase<AssetContext>, IAssetLoader
     public unsafe AssetLoader(AssetContext context, Dictionary<string, ModuleBase<AssetContext>> modules) : base(context, modules)
     {
         CheckStreamedAssetsMS = new MultiSignature();
+        CreateStreamHandleMS = new MultiSignature();
         _context._utils.MultiSigScan(
             [UAssetLoader_CheckStreamedAssets_SIG, UAssetLoader_CheckStreamedAssets_SIG_EpAigis],
             "UAssetLoader::CheckStreamedAssets", _context._utils.GetDirectAddress,
@@ -50,9 +51,14 @@ public class AssetLoader : ModuleBase<AssetContext>, IAssetLoader
             },
             CheckStreamedAssetsMS
         );
+        _context._utils.MultiSigScan(
+            [UAssetLoader_CreateStreamHandle_SIG_0, UAssetLoader_CreateStreamHandle_SIG_1],
+            "UAssetLoader::CreateStreamHandle", _context._utils.GetDirectAddress,
+            addr => _UAssetLoader_CreateStreamHandle = _context._hooks.CreateWrapper<UAssetLoader_CreateStreamHandle>(addr, out _),
+            CreateStreamHandleMS
+        );
+        
         _UAssetLoader_LoadTargetAsset = new();
-        _UAssetLoader_LoadQueuedAssets = new();
-        _UAssetLoader_CreateStreamHandle = new();
     }
 
     public override void Register() {}
@@ -88,6 +94,6 @@ public class AssetLoader : ModuleBase<AssetContext>, IAssetLoader
     public unsafe void LoadAsset(IntPtr loader, string path, IntPtr target, Action<IntPtr> onLoaderCb)
         => LoadAssetInner((UAssetLoader*)loader, path, target, onLoaderCb);
 
-    public unsafe void CreateHandle(nint loader) => _UAssetLoader_CreateStreamHandle.Wrapper((UAssetLoader*)loader);
-    public unsafe void LoadQueuedAssets(nint loader) => _UAssetLoader_LoadQueuedAssets.Wrapper((UAssetLoader*)loader);
+    public unsafe void CreateHandle(nint loader) => _UAssetLoader_CreateStreamHandle!((UAssetLoader*)loader);
+    public void LoadQueuedAssets(nint loader) => CreateHandle(loader);
 }
