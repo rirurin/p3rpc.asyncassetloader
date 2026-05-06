@@ -14,7 +14,7 @@
 	    <PackageId>p3rpc.asyncassetloader.Interfaces</PackageId>
 
 	    <!-- Use Semantic Versioning -->
-	    <Version>1.0.1</Version>
+	    <Version>1.0.2</Version>
 	    <Authors>Rirurin</Authors>
 
 	    <!-- Description of your Package -->
